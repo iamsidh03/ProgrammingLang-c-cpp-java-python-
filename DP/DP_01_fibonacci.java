@@ -1,8 +1,9 @@
 class DP_01_fibonacci{
 public static void main(String[] args) {
-    int n=5;
+    int n=30;
    // int []dp=new int[n+1];
     System.out.println(fibo_tabular(n));
+    System.out.println(fibo(n));
     
 }
 //using Memoization  O(n)

@@ -7,7 +7,7 @@ public class coin_change {
     public static int tabu_CoinChange(int []coin,int sum){
         int n=coin.length;
         int dp[][]= new int[n+1][sum+1];
-        for (int i = 0; i < dp.length; i++) 
+        for (int i = 0; i < dp.length; i++) {
                 dp[i][0]=1;
             
         }
@@ -27,5 +27,6 @@ public class coin_change {
         }
         return dp[n][sum];
     }
-
 }
+
+
