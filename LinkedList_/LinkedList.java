@@ -11,12 +11,17 @@ package LinkedList_;
         createList.addlast(300);
        createList.add(200,3);
        createList.print();
-       System.out.println("Size of linked list:"+size);
-      // System.out.println("Delete from last index "+createList.removelast());
-      // System.out.println("Deleted List is:"+createList.removeFirst());
-     //  createList.print();
        //System.out.println("Size of linked list:"+size);
-      // int SearchElement=10;
+
+      // System.out.println("Delete from last index "+createList.removelast());
+
+      // System.out.println("Deleted List is:"+createList.removeFirst());
+
+     //  createList.print();
+
+       //System.out.println("Size of linked list:"+size);
+
+         // int SearchElement=10;
        /*
        if(createList.LinearSearch(SearchElement)==-1){
         System.out.println("element not found");
@@ -27,14 +32,22 @@ package LinkedList_;
          */
         
        //createList.reverse();
-       //createList.deleteNthfromend(3);
-      // createList.print();
-      // System.out.println(createList.checkPalindrome());;
-        // System.out.println("Cycle Exists:"+createList.iscyle());
-      //createList.removeCycle();
-       createList.head=createList.mergeSort(createList.head);
 
-      createList.print();
+       //createList.deleteNthfromend(3);
+
+      // createList.print();
+
+      // System.out.println(createList.checkPalindrome());;
+
+        // System.out.println("Cycle Exists:"+createList.iscyle());
+
+      //createList.removeCycle();
+
+       //createList.head=createList.mergeSort(createList.head);
+
+                 createList.ZigZag();
+                 
+            createList.print();
 
 
     }
@@ -347,4 +360,37 @@ node newRight=mergeSort(righthead);
     
     return Merge(newLeft,newRight);
 }
+        public void ZigZag(){
+            node slow=head;
+            node fast=head.next;
+            while(fast!=null&&fast.next!=null){
+                slow=slow.next;
+                fast=fast.next.next;
+
+            }
+            node mid =slow;
+            node curr=mid.next;
+            mid.next=null;
+            node prev=null;
+            node next;
+            while(curr!=null){
+                next=curr.next;
+                curr.next=prev;
+                prev=curr;
+                curr=next;
+                
+            }
+            node left=head;
+            node right=prev;
+            node nextl,nextr;
+            while(left!=null&&right!=null){
+                nextl=left.next;
+                left.next=right;
+                nextr=right.next;
+                right.next=nextl;
+
+                left=nextl;
+                right=nextr;
+            }
+        }
   }
