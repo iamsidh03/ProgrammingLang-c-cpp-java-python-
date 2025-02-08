@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import java.util.*;
 class str01 {
     public static void main(String[] args) {
@@ -208,3 +209,20 @@ return substr;
  
  
 }
+=======
+
+import java.util.*;
+class Main {
+    public static void main(String[] args) {
+        char arr[]={'a','b'};
+        String str="abc";
+        String str2=new String("xyz");
+        // 'str' and 'str2' both are strings butImpelemention level of str and str2 is different
+        //Strings are IMMutable in java
+        Scanner sc =new Scanner(System.in);
+        String name;
+        name=sc.next();
+        Syatem.out.println(name);
+    }
+}
+>>>>>>> 006339a30158b25ba8114372a45f4b1700c2111f
