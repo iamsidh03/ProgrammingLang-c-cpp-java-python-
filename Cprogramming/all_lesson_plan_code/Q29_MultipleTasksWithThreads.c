@@ -1,0 +1,39 @@
+#include <stdio.h>
+#include <pthread.h>
+
+void *task1(void *arg) {
+    printf("Task 1 is being performed by thread %lu\n", pthread_self());
+    return NULL;
+}
+
+void *task2(void *arg) {
+    printf("Task 2 is being performed by thread %lu\n", pthread_self());
+    return NULL;
+}
+
+void *task3(void *arg) {
+    printf("Task 3 is being performed by thread %lu\n", pthread_self());
+    return NULL;
+}
+
+int main() {
+    pthread_t threads[3];  // Array of threads
+
+    // Create threads to perform multiple tasks
+    pthread_create(&threads[0], NULL, task1, NULL);
+    pthread_create(&threads[1], NULL, task2, NULL);
+    pthread_create(&threads[2], NULL, task3, NULL);
+
+    // Wait for all threads to finish
+    for (int i = 0; i < 3; i++) {
+        pthread_join(threads[i], NULL);
+    }
+
+    printf("All tasks are completed.\n");
+
+    return 0;
+}
+
+/*gcc -o ProcessCreation ProcessCreation.c
+gcc -o MultipleTasksWithThreads MultipleTasksWithThreads.c -lpthread
+*/

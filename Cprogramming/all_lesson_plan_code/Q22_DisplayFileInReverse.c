@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_LINE_LENGTH 1000
+
+void displayReverse(FILE *file) {
+    fseek(file, 0, SEEK_END);  // Move the file pointer to the end of the file
+
+    long fileSize = ftell(file); // Get the size of the file
+    char *buffer = (char *)malloc(fileSize * sizeof(char));
+
+    if (buffer == NULL) {
+        printf("Memory allocation failed.\n");
+        return;
+    }
+
+    // Move file pointer to the beginning
+    fseek(file, 0, SEEK_SET);
+
+    // Read the entire file content into the buffer
+    fread(buffer, 1, fileSize, file);
+
+    // Print the content in reverse
+    for (long i = fileSize - 1; i >= 0; i--) {
+        putchar(buffer[i]);
+    }
+
+    free(buffer);  // Free the allocated memory
+}
+
+int main() {
+    FILE *file = fopen("input.txt", "r");
+
+    if (file == NULL) {
+        printf("Could not open file.\n");
+        return 1;
+    }
+
+    // Display the content of the file in reverse order
+    displayReverse(file);
+
+    fclose(file);
+    return 0;
+}
+/*The program reads the entire file, stores it in memory, and then prints the file's content in reverse order, from the last character to the first*/

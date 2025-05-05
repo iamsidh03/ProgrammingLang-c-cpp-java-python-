@@ -1,0 +1,19 @@
+#include <stdio.h>
+
+// Compile-time assertion to check if a number is positive
+#define ASSERT_POSITIVE(x) _Static_assert((x) > 0, "Number must be positive!")
+
+int main() {
+    int num = -5;
+    
+    // This will cause a compile-time error since num is not positive
+    ASSERT_POSITIVE(num);
+
+    printf("This line will not be reached.\n");
+    return 0;
+}
+/*
+
+Compile-time Assertions:
+
+_Static_assert is used to check conditions at compile time. If the condition fails, the compiler will throw an error with a message. In this example, the assertion checks that a number is positive. */
