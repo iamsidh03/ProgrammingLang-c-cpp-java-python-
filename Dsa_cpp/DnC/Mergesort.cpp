@@ -1,6 +1,12 @@
 #include<iostream>
 using namespace std;
 
+
+/* divide the array into two halves left and right  untill they are of size 1
+merge the two halves in sorted order
+   Time Complexity: O(nlogn)
+   Space Complexity: O(n)
+*/
 void merge(int arr[], int s, int e) {
     int mid = (s + e) / 2;
     int lenLeft = mid - s + 1;
