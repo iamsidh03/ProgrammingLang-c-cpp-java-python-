@@ -110,6 +110,7 @@ node *sortDummyApproach(node *head)
 }
 node *sort2(node *&head)
 {
+    if(!head || !head->next) return head;
     node *zerohead = new node(-1);
     node *zerotail = zerohead;
 
