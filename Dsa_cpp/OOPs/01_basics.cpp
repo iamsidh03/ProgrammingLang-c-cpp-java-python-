@@ -1,5 +1,8 @@
 #include<iostream>
 using namespace std;
+class a{
+
+};
 class sizeclass{
     public:
     // char a;
@@ -14,16 +17,17 @@ class sizeclass{
     char b;
 
 };
-class Student{
+class Student{ //
     private:
     string name;
     int    age,roll_no;
     string grade;
     public:
+
     // Constructor
     void setname(string s){
         if(s.size()==0) {
-            cout<<"Invalid name"<<endl;
+            cout<<"Invalid name";
             return;
         }
         name=s;
@@ -43,26 +47,44 @@ class Student{
       }
       return "Invalid pin";
       
-    }
+    }    
     void display(){
         cout<<name<<" "<<age<<" "<<roll_no<<" "<<grade<<endl;
     }
 };
 int main(){
     Student s1;
-    // s1.name="";
-    // s1.age=20;
-    // s1.roll_no=1;
-    // s1.grade="A";
-    // cout<<s1.name<<" "<<s1.age<<" "<<s1.roll_no<<" "<<s1.grade<<endl;
-    // s1.setname("");
-    // s1.setage(20);
-    // s1.setroll_no(1);
-    // s1.setgrade("A");
-    // s1.display();
-    // cout<<s1.get_grade(123)<<endl;
-    // cout<<s1.get_grade(456)<<endl;
-    sizeclass s;
+  /*   s1.name="";
+    s1.age=20;
+    s1.roll_no=1;
+    s1.grade="A";
+    cout<<s1.name<<" "<<s1.age<<" "<<s1.roll_no<<" "<<s1.grade<<endl;*/
+
+  /*   s1.setname("");
+    s1.setage(20);
+    s1.setroll_no(1);
+    s1.setgrade("A");
+    s1.display();
+    cout<<s1.get_grade(123)<<endl; */
+
+    // cout<<s1.get_grade(456)<<endl; 
+   /*  sizeclass s;
     cout<<sizeof(s)<<endl;
+    */
+   /*  
+    a obj; 
+    cout<<sizeof(obj)<<endl; //size of empty class is 1 */
+    
+
+    Student *s2 =new Student;
+    // (*s2).name="abc"; // or s2->setname("abc");
+    (*s2).setname("abc");
+    (*s2).setage(20);
+    (*s2).setroll_no(1);
+    (*s2).setgrade("A");
+    (*s2).display();
+    
     return 0;
+
+
 }
