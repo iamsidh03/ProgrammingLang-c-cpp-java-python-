@@ -1,0 +1,234 @@
+### **Inter-Process Communication (IPC)**
+
+In this explanation, we will cover two IPC mechanisms:
+
+1. **Passing a message from one process to another using a message queue**: We will use message queues to pass messages between processes.
+2. **Communicating between processes using shared memory**: Shared memory allows two or more processes to communicate by sharing a portion of memory.
+
+Let's walk through both scenarios with code examples in C.
+
+---
+
+### **1. Passing a Message Between Processes Using a Message Queue**
+
+Message queues allow processes to exchange messages in a queue-like structure. Processes can send and receive messages asynchronously.
+
+We'll use the POSIX message queue system (`mq_send()` and `mq_receive()`) for this task.
+
+#### **Program Name**: `MessageQueueExample.c`
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <mqueue.h>
+#include <string.h>
+#include <unistd.h>
+
+#define QUEUE_NAME "/message_queue"
+#define MAX_SIZE 1024
+#define MSG_STOP "exit"
+
+int main() {
+    mqd_t mq;
+    char buffer[MAX_SIZE];
+    pid_t pid;
+
+    // Create a message queue
+    mq = mq_open(QUEUE_NAME, O_CREAT | O_RDWR, 0644, NULL);
+    if (mq == -1) {
+        perror("mq_open failed");
+        exit(1);
+    }
+
+    pid = fork();  // Create child process
+
+    if (pid < 0) {
+        perror("fork failed");
+        exit(1);
+    }
+
+    if (pid == 0) {
+        // Child process: Read message from queue
+        while (1) {
+            ssize_t bytes_read = mq_receive(mq, buffer, MAX_SIZE, NULL);
+            if (bytes_read >= 0) {
+                buffer[bytes_read] = '\0';
+                if (strcmp(buffer, MSG_STOP) == 0) {
+                    printf("Child received the stop message, exiting.\n");
+                    break;
+                }
+                printf("Child received: %s\n", buffer);
+            } else {
+                perror("mq_receive failed");
+                exit(1);
+            }
+        }
+    } else {
+        // Parent process: Send messages to the queue
+        while (1) {
+            printf("Enter a message: ");
+            fgets(buffer, sizeof(buffer), stdin);
+            buffer[strcspn(buffer, "\n")] = '\0'; // Remove the newline character
+
+            if (mq_send(mq, buffer, strlen(buffer) + 1, 0) == -1) {
+                perror("mq_send failed");
+                exit(1);
+            }
+
+            if (strcmp(buffer, MSG_STOP) == 0) {
+                break;
+            }
+        }
+    }
+
+    // Close and unlink the message queue
+    mq_close(mq);
+    mq_unlink(QUEUE_NAME);
+
+    return 0;
+}
+```
+
+### **Explanation of Message Queue Example**:
+- **Parent Process**: Sends messages to the message queue.
+- **Child Process**: Receives messages from the message queue.
+- The communication continues until the "exit" message is sent.
+
+### **Key Functions**:
+- **`mq_open()`**: Opens or creates a message queue.
+- **`mq_send()`**: Sends a message to the queue.
+- **`mq_receive()`**: Receives a message from the queue.
+- **`mq_close()`**: Closes the message queue.
+- **`mq_unlink()`**: Removes the message queue from the system.
+
+---
+
+### **2. Communicating Between Processes Using Shared Memory**
+
+Shared memory allows multiple processes to access the same region of memory, enabling them to communicate by reading and writing data to shared memory locations.
+
+We'll use POSIX shared memory with `shm_open()`, `mmap()`, and `munmap()`.
+
+#### **Program Name**: `SharedMemoryExample.c`
+
+```c
+#include <stdio.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+#include <unistd.h>
+#include <string.h>
+
+#define SHM_NAME "/shared_memory"
+#define SIZE 1024
+
+int main() {
+    int shm_fd;
+    char *shm_ptr;
+    pid_t pid;
+
+    // Create or open the shared memory object
+    shm_fd = shm_open(SHM_NAME, O_CREAT | O_RDWR, 0666);
+    if (shm_fd == -1) {
+        perror("shm_open failed");
+        exit(1);
+    }
+
+    // Set the size of the shared memory object
+    if (ftruncate(shm_fd, SIZE) == -1) {
+        perror("ftruncate failed");
+        exit(1);
+    }
+
+    // Map the shared memory object to the address space
+    shm_ptr = mmap(0, SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, shm_fd, 0);
+    if (shm_ptr == MAP_FAILED) {
+        perror("mmap failed");
+        exit(1);
+    }
+
+    pid = fork();  // Create child process
+
+    if (pid < 0) {
+        perror("fork failed");
+        exit(1);
+    }
+
+    if (pid == 0) {
+        // Child process: Read from shared memory
+        sleep(2);  // Ensure parent writes first
+        printf("Child reads from shared memory: %s\n", shm_ptr);
+    } else {
+        // Parent process: Write to shared memory
+        printf("Parent writing to shared memory...\n");
+        snprintf(shm_ptr, SIZE, "Hello from the parent process!");
+        sleep(1);  // Allow child to read the message
+    }
+
+    // Clean up
+    munmap(shm_ptr, SIZE);  // Unmap shared memory
+    close(shm_fd);  // Close the shared memory object
+    shm_unlink(SHM_NAME);  // Unlink the shared memory object
+
+    return 0;
+}
+```
+
+### **Explanation of Shared Memory Example**:
+- **Parent Process**: Writes a message to shared memory.
+- **Child Process**: Reads the message from shared memory.
+- The communication happens through a shared memory region mapped to both processes' address spaces.
+
+### **Key Functions**:
+- **`shm_open()`**: Creates or opens a shared memory object.
+- **`ftruncate()`**: Sets the size of the shared memory object.
+- **`mmap()`**: Maps the shared memory object to the process's address space.
+- **`munmap()`**: Unmaps the shared memory.
+- **`shm_unlink()`**: Unlinks the shared memory object, removing it from the file system.
+
+---
+
+### **Compilation**:
+To compile both programs:
+```
+gcc -o MessageQueueExample MessageQueueExample.c -lrt
+gcc -o SharedMemoryExample SharedMemoryExample.c -lrt
+```
+
+### **Sample Output for Message Queue**:
+**Parent Output**:
+```
+Enter a message: Hello, child!
+Enter a message: exit
+```
+
+**Child Output**:
+```
+Child received: Hello, child!
+Child received the stop message, exiting.
+```
+
+### **Sample Output for Shared Memory**:
+**Parent Output**:
+```
+Parent writing to shared memory...
+```
+
+**Child Output**:
+```
+Child reads from shared memory: Hello from the parent process!
+```
+
+---
+
+### **Summary**:
+
+1. **Message Queue**:
+   - A message queue allows communication between processes where the producer (parent) sends messages to the queue, and the consumer (child) reads them.
+   - It is asynchronous and can handle multiple messages.
+
+2. **Shared Memory**:
+   - Shared memory allows processes to directly access the same memory region, making communication fast and efficient.
+   - Both the parent and child process map the same shared memory region to their address spaces.
+
+Let me know if you need further explanations or modifications!
