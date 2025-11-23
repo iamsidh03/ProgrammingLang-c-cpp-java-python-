@@ -1,0 +1,21 @@
+# Ignore Java class files
+*.class
+
+# Ignore C/C++ compiled files
+*.exe
+*.o
+*.obj
+
+# Ignore build outputs
+/bin/
+/build/
+/out/
+
+# Ignore IDE settings and workspace
+.vscode/
+.idea/
+*.iml
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
